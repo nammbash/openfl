@@ -54,25 +54,14 @@ $ pip install openfl
 For more installation options check out the [online documentation](https://openfl.readthedocs.io/en/latest/install.html).
 
 ## Getting Started
-
+OpenFL enables data scientists to set up a federated learning experiment following one of the workflows using the associated API, each with its own benefits
 
 | workflow Mode | API | Flexibility | Ease of Use | SingleNode |  MultiNode | Real Federation Usage | 1.x support | 2.x support |
 | -------------- | ----- | :--------------------: | :-----------------------: | :----------------------------: | :----------: | :----------: | :----------: | :----------: |
-| Native | Python Native API | ❌ | ✅ | ✅ | ❌ | ❌ |  ✅ | ❌ |
-| [Aggregator-based](https://openfl.readthedocs.io/en/latest/running_the_federation.html#aggregator-based-workflow) | Task Runner API | ✅ | ❌ | ✅ | ✅ | ✅ |  ✅ | ❌ |
-| [Director-based](https://openfl.readthedocs.io/en/latest/running_the_federation.html#director-based-workflow) | Interactive API | ❌ | ✅ | ✅ | ✅ | ❌ |  ✅ | ✅ |
-| [Experimental](https://openfl.readthedocs.io/en/latest/workflow_interface.html) | Workflow Interface API | ✅ | ✅ | ✅ | ❌ | ❌ |  ✅ | ✅ |
-
-OpenFL enables data scientists to set up a federated learning experiment following one of the workflows:
-
-- [Director-based Workflow](https://openfl.readthedocs.io/en/latest/running_the_federation.html#director-based-workflow):
-Setup long-lived components to run many experiments in series. Recommended for FL research when many changes to model, dataloader, or hyperparameters are expected
-
-- [Aggregator-based Workflow](https://openfl.readthedocs.io/en/latest/running_the_federation.html#aggregator-based-workflow):
-Define an experiment and distribute it manually. All participants can verify model code and [FL plan](https://openfl.readthedocs.io/en/latest/running_the_federation.html#federated-learning-plan-fl-plan-settings) prior to execution. The federation is terminated when the experiment is finished
-
-- [Workflow Interface](https://openfl.readthedocs.io/en/latest/workflow_interface.html) ([*experimental*](https://openfl.readthedocs.io/en/latest/experimental_features.html)):
-Create complex experiments that extend beyond traditional horizontal federated learning. See the [experimental tutorials](https://github.com/intel/openfl/blob/develop/openfl-tutorials/experimental/) to learn how to coordinate [aggregator validation after collaborator model training](https://github.com/intel/openfl/tree/develop/openfl-tutorials/experimental/Workflow_Interface_102_Aggregator_Validation.ipynb), [perform global differentially private federated learning](https://github.com/psfoley/openfl/tree/experimental-workflow-interface/openfl-tutorials/experimental/Global_DP), measure the amount of private information embedded in a model after collaborator training with [privacy meter](https://github.com/intel/openfl/blob/develop/openfl-tutorials/experimental/Privacy_Meter/readme.md), or [add a watermark to a federated model](https://github.com/intel/openfl/blob/develop/openfl-tutorials/experimental/Workflow_Interface_301_MNIST_Watermarking.ipynb).
+| Native | Python Native | ❌ | ✅ | ✅ | ❌ | ❌ |  ✅ | ❌ |
+| [Aggregator-based](https://openfl.readthedocs.io/en/latest/running_the_federation.html#aggregator-based-workflow) | Task Runner | ✅ | ❌ | ✅ | ✅ | ✅ |  ✅ | ❌ |
+| [Director-based](https://openfl.readthedocs.io/en/latest/running_the_federation.html#director-based-workflow) | Interactive | ❌ | ✅ | ✅ | ✅ | ❌ |  ✅ | ✅ |
+| [Experimental](https://openfl.readthedocs.io/en/latest/workflow_interface.html) | Workflow Interface | ✅ | ✅ | ✅ | ❌ | ❌ |  ✅ | ✅ |
 
 The quickest way to test OpenFL is to follow our [tutorials](https://github.com/intel/openfl/tree/develop/openfl-tutorials). </br>
 Read the [blog post](https://towardsdatascience.com/go-federated-with-openfl-8bc145a5ead1) explaining steps to train a model with OpenFL. </br>
