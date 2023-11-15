@@ -58,7 +58,7 @@ OpenFL enables data scientists to set up a federated learning experiment followi
 
 | Notes | Links | 
 | -------------- | ----- |
-Quick Test OpenFL using     | [Quick Start on Bare Metal](#guide) |
+Quick Test OpenFL using     | [Quick Start on Bare Metal](#architecture) |
 Quickest Start OpenFL using | [tutorials](https://github.com/intel/openfl/tree/develop/openfl-tutorials). |
 Read                        | [blog post](https://towardsdatascience.com/go-federated-with-openfl-8bc145a5ead1) explaining steps to train a model with OpenFL. |
 Launch Federation using     | [online documentation](https://openfl.readthedocs.io/en/latest/index.html) to launch your first federation. |
