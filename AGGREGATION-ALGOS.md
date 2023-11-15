@@ -1,4 +1,5 @@
-### Supported Aggregation Algorithms
+# Supported Aggregation Algorithms
+
 | Algorithm Name | Paper | PyTorch implementation | TensorFlow implementation | Other frameworks compatibility | How to use | 
 | -------------- | ----- | :--------------------: | :-----------------------: | :----------------------------: | ---------- |
 | FedAvg | [McMahan et al., 2017](https://arxiv.org/pdf/1602.05629.pdf) | ✅ | ✅ | ✅ | [docs](http://openfl.readthedocs.io/en/latest/supported_aggregation_algorithms.html#fedavg) |
