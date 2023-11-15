@@ -47,6 +47,8 @@ OpenFL supports training with TensorFlow 2+ or PyTorch 1.3+ which should be inst
 ## Get Started
 OpenFL enables data scientists to set up a federated learning experiment following one of the workflows using the associated API, each with its own benefits
 
+### Modes and associated API
+
 | workflow Mode | API | Flexibility | Ease of Use | SingleNode |  MultiNode | Real Federation Usage | 1.x support | 2.x support |
 | -------------- | ----- | :--------------------: | :-----------------------: | :----------------------------: | :----------: | :----------: | :----------: | :----------: |
 | Native | Python Native | ❌ | ✅ | ✅ | ❌ | ❌ |  ✅ | ❌ |
@@ -59,9 +61,9 @@ OpenFL enables data scientists to set up a federated learning experiment followi
 | Notes | Links | 
 | -------------- | ----- |
 Quick Test OpenFL using     | [Quick Start steps below for singlenode](#quick-start) |
-Quickest Start OpenFL using | [tutorials](https://github.com/intel/openfl/tree/develop/openfl-tutorials). |
-Read                        | [blog post](https://towardsdatascience.com/go-federated-with-openfl-8bc145a5ead1) explaining steps to train a model with OpenFL. |
-Launch Federation using     | [online documentation](https://openfl.readthedocs.io/en/latest/index.html) to launch your first federation. |
+Quickest Start OpenFL using | [Tutorials](https://github.com/intel/openfl/tree/develop/openfl-tutorials). |
+Read                        | [Blog Post](https://towardsdatascience.com/go-federated-with-openfl-8bc145a5ead1) explaining steps to train a model with OpenFL. |
+Launch Federation using     | [Online Documentation](https://openfl.readthedocs.io/en/latest/index.html) to launch your first federation. |
 
 ### Quick Start
 
@@ -92,7 +94,7 @@ pip install -r requirements.txt
 ```
 
 ## Run Using Bare Metal 
-See [AGGREGATION-ALGOS](AGGREGATION-ALGOS.md) for supported aggregation algorithms.
+See [Modes and API](#modes-and-associated-api) for supported aggregation algorithms.
 ```shell
 <mode>   mode you want to trigger.
 
