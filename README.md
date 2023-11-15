@@ -44,16 +44,7 @@ Landed Looking for the Open Flash Library project also referred to as OpenFL? Fi
 
 OpenFL supports training with TensorFlow 2+ or PyTorch 1.3+ which should be installed separately. User can extend the list of supported Deep Learning frameworks if needed.
 
-## Installation
-
-You can simply install OpenFL from PyPI:
-
-```
-$ pip install openfl
-```
-For more installation options check out the [online documentation](https://openfl.readthedocs.io/en/latest/install.html).
-
-## Getting Started
+## Get Started
 OpenFL enables data scientists to set up a federated learning experiment following one of the workflows using the associated API, each with its own benefits
 
 | workflow Mode | API | Flexibility | Ease of Use | SingleNode |  MultiNode | Real Federation Usage | 1.x support | 2.x support |
@@ -63,9 +54,55 @@ OpenFL enables data scientists to set up a federated learning experiment followi
 | [Director-based](https://openfl.readthedocs.io/en/latest/running_the_federation.html#director-based-workflow "Setup long-lived components to run many experiments in series. Recommended for FL research when many changes to model, dataloader, or hyperparameters are expected") | Interactive | ❌ | ✅ | ✅ | ✅ | ❌ |  ✅ | ✅ |
 | [Workflow-based](https://openfl.readthedocs.io/en/latest/workflow_interface.html "Create complex experiments that extend beyond traditional horizontal federated learning. See the experimental tutorials to learn how to coordinate aggregator validation after collaborator model training, perform global differentially private federated learning, measure the amount of private information embedded in a model after collaborator training with privacy meter, or add a watermark to a federated model")  | Workflow Interface | ✅ | ✅ | ✅ | ❌ | ❌ |  ✅ | ✅ |
 
-The quickest way to test OpenFL is to follow our [tutorials](https://github.com/intel/openfl/tree/develop/openfl-tutorials). </br>
-Read the [blog post](https://towardsdatascience.com/go-federated-with-openfl-8bc145a5ead1) explaining steps to train a model with OpenFL. </br>
-Check out the [online documentation](https://openfl.readthedocs.io/en/latest/index.html) to launch your first federation.
+### Guide
+
+| Notes | Links | 
+| -------------- | ----- |
+Quick Test OpenFL using     | Quick Start on Bare Metals Tutorial below. () |
+Quickest Start OpenFL using | [tutorials](https://github.com/intel/openfl/tree/develop/openfl-tutorials). |
+Read                        | [blog post](https://towardsdatascience.com/go-federated-with-openfl-8bc145a5ead1) explaining steps to train a model with OpenFL. |
+Launch Federation using     | [online documentation](https://openfl.readthedocs.io/en/latest/index.html) to launch your first federation. |
+
+### Quick Start
+
+For more installation options check out the [online documentation](https://openfl.readthedocs.io/en/latest/install.html).
+
+### Clone this Repository
+```
+export WORKSPACE=</workspace/path>
+
+git clone [https://github.com/securefederatedai/openfl.git $WORKSPACE/intel-nlp-toolkit](https://github.com/securefederatedai/openfl.git)
+cd $WORKSPACE/
+```
+
+### Create a New Python  (Conda or Venv) Environment With Env Name: "fedai"
+```shell
+conda create -n fedai python=3.10
+conda activate fedai
+```
+or
+```shell
+python -m venv fedai
+source fedai
+```
+
+### Install Packages For Running OpenFL in <Aggregator> Mode 
+```shell
+pip install -r requirements.txt
+```
+
+## Run Using Bare Metal 
+See [AGGREGATION-ALGOS](AGGREGATION-ALGOS.md) for supported aggregation algorithms.
+```shell
+<mode>   mode you want to trigger.
+
+sh aggregator_based_mode.sh
+or
+sh Fedai.sh <mode>
+```
+## Run Using Docker
+< to add later > 
+
 
 ## Support
 Please join us for our bi-monthly community meetings starting December 1 & 2, 2022! <br>
