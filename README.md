@@ -49,12 +49,12 @@ OpenFL enables data scientists to set up a federated learning experiment followi
 
 ### Modes and associated API
 
-| workflow Mode | API | Flexibility | Ease of Use | SingleNode |  MultiNode | Real Federation Usage | 1.x support | 2.x support |
+| API | Workflow | Flexibility | Ease of Use | SingleNode |  MultiNode | Real Federation Usage | 1.x support | 2.x support |
 | -------------- | ----- | :--------------------: | :-----------------------: | :----------------------------: | :----------: | :----------: | :----------: | :----------: |
-| Native | Python Native | ❌ | ✅ | ✅ | ❌ | ❌ |  ✅ | ❌ |
-| [Aggregator-based](https://openfl.readthedocs.io/en/latest/running_the_federation.html#aggregator-based-workflow "Define an experiment and distribute it manually. All participants can verify model code and FL plan prior to execution. The federation is terminated when the experiment is finished") | Task Runner | ✅ | ❌ | ✅ | ✅ | ✅ |  ✅ | ❌ |
-| [Director-based](https://openfl.readthedocs.io/en/latest/running_the_federation.html#director-based-workflow "Setup long-lived components to run many experiments in series. Recommended for FL research when many changes to model, dataloader, or hyperparameters are expected") | Interactive | ❌ | ✅ | ✅ | ✅ | ❌ |  ✅ | ✅ |
-| [Workflow-based](https://openfl.readthedocs.io/en/latest/workflow_interface.html "Create complex experiments that extend beyond traditional horizontal federated learning. See the experimental tutorials to learn how to coordinate aggregator validation after collaborator model training, perform global differentially private federated learning, measure the amount of private information embedded in a model after collaborator training with privacy meter, or add a watermark to a federated model")  | Workflow Interface | ✅ | ✅ | ✅ | ❌ | ❌ |  ✅ | ✅ |
+| [ Task Runner](https://openfl.readthedocs.io/en/latest/running_the_federation.html#aggregator-based-workflow "Define an experiment and distribute it manually. All participants can verify model code and FL plan prior to execution. The federation is terminated when the experiment is finished") | Task Runner | ✅ | ❌ | ✅ | ✅ | ✅ |  ✅ | ❌ |
+| Python Native | Python Native | ❌ | ✅ | ✅ | ❌ | ❌ |  ✅ | ❌ |
+| [Interative](https://openfl.readthedocs.io/en/latest/running_the_federation.html#director-based-workflow "Setup long-lived components to run many experiments in series. Recommended for FL research when many changes to model, dataloader, or hyperparameters are expected") | Interactive | ❌ | ✅ | ✅ | ✅ | ❌ |  ✅ | ✅ |
+| [Workflow Interface](https://openfl.readthedocs.io/en/latest/workflow_interface.html "Create complex experiments that extend beyond traditional horizontal federated learning. See the experimental tutorials to learn how to coordinate aggregator validation after collaborator model training, perform global differentially private federated learning, measure the amount of private information embedded in a model after collaborator training with privacy meter, or add a watermark to a federated model")  | Workflow Interface | ✅ | ✅ | ✅ | ❌ | ❌ |  ✅ | ✅ |
 
 ### Guide
 
