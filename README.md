@@ -33,40 +33,141 @@ Landed Looking for the Open Flash Library project also referred to as OpenFL? Fi
 [Federated learning](https://en.wikipedia.org/wiki/Federated_learning) is a distributed machine learning approach that enables collaboration on machine learning projects without having to share sensitive data, such as, patient records, financial data, or classified information. The minimum data movement needed across the federation is solely the model parameters and their updates.
 
 ## Quick Start Guide
-### Clone this Repository
-```
-export WORKSPACE=</workspace/path>
+The Quick Start Guide showcases setting up a federation using the TaskRunner API on a single machine
+|   |  | 
+| -------------- | -------- |
+| Containing 3 Participants | 1. Aggregator  <br/> 2. Collaborator1  <br/> 3. Collaborator2  |
+| Guide can be extended easily to | > Participants on separate machines. <br/> > Any number of Collaborators. |
 
-git clone [https://github.com/securefederatedai/openfl.git $WORKSPACE/intel-nlp-toolkit](https://github.com/securefederatedai/openfl.git)
-cd $WORKSPACE/
+**Guide in few simple steps.** _(Tip: use fx --help for any command usage details)_
 ```
-
-### Create a New Python  (Conda or Venv) Environment With Env Name: "fedai"
-```shell
+0. Setup Prerequisites: miniconda environment, any Proxies (if needed), FQDN etc.
+1. Setup Aggregator Workspace: Specify amongst others the model to train using the right FL Plan.
+2. Setup "Collaborator 1" Workspace: Setup made easy by using the aggregator workspace above.
+3. Setup "Collaborator 2" Workspace: Setup made easy by using the aggregator workspace above.
+4. Start the Aggregator.
+5. Start the 2 Collaborators.
+```
+### Step 0: Prerequisites
+#### _Setup FQDN_
+```bash
+export FQDN=<FQDN> # Enter your FQDN here
+export no_proxy= localhost, <local machine IP>, <FQDN>
+```
+#### _Setup Miniconda environment_
+```bash
 conda create -n fedai python=3.10
 conda activate fedai
 ```
-or
-```shell
-python -m venv fedai
-source fedai
+#### _Install OpenFL from source_
+```bash
+git clone https://github.com/intel/openfl.git
+python -m pip install -U pip setuptools wheel
+cd openfl/
+python -m pip install .
 ```
-
-### Install Packages For Running OpenFL in <Aggregator> Mode 
-```shell
+### _Step 1: Setup Aggregator (in the current terminal)_
+#### _Step 1a: Set Aggregator variables._
+```bash
+export WORKSPACE_TEMPLATE=keras_cnn_mnist # Specify the model to train and associted "FL Plan".
+```
+#### _Step 1b: Set Aggregator Workspace Variables._
+```bash
+export WORKSPACE_NAME="my_federation"
+export WORKSPACE_PATH_AGGR=${HOME}/${WORKSPACE_NAME}
+```
+#### _Step 1c: Setup Aggregator Workspace._
+```bash
+cd ${HOME}
+fx workspace create --prefix ${WORKSPACE_PATH_AGGR} --template ${WORKSPACE_TEMPLATE}
+cd ${WORKSPACE_PATH_AGGR}
 pip install -r requirements.txt
+fx plan initialize
 ```
-
+#### _Step 1d: Certify Aggregator Workspace._
+```bash
+fx workspace certify
+fx aggregator generate-cert-request --fqdn $FQDN
+fx aggregator certify --fqdn $FQDN  # Press "y" when prompted.
+```
+#### _Step 1e: Zip/Export Aggregator Workspace._
+```bash
+fx workspace export # Zip/export Workspace to be able to be imported by collaborators for usage.
+```
+### Step 2: Setup Collaborator1 _(in new terminal of same machine)_. _(Tip:Press Ctrl+Alt+T)_
+_Note: Steps for new terminal in another machines are similar expect for exchanging files(cp vs scp) between these machines_
+#### _Step 2a: Setup Collaborator1 Variables._
+```bash
+export COLLAB_NUMBER=1 # need to define the collab number. (1 now, 2 later, etc)
+```
+```bash
+conda activate fedai # If machine is different you need Step 0: Prerequisites.
+export COLLAB_NAME=cob_${COLLAB_NUMBER}
+export COLLAB_PATH=${HOME}/${COLLAB_NAME}
+mkdir ${COLLAB_PATH}
+```
+#### _Step 2b: Setup Collaborator1 Workspace Variables._
+```bash
+export WORKSPACE_NAME="my_federation"
+export WORKSPACE_PATH_AGGR=${HOME}/${WORKSPACE_NAME}
+export WORKSPACE_PATH_COBR=${COLLAB_PATH}/${WORKSPACE_NAME}
+```
+#### _Step 2c: Setup Collaborator1 Workspace._
+```bash
+cp ${WORKSPACE_PATH_AGGR}/${WORKSPACE_NAME}.zip ${COLLAB_PATH}/${WORKSPACE_NAME}.zip
+cd ${COLLAB_PATH}
+fx workspace import --archive ${WORKSPACE_NAME}.zip # Import the copied workspace from aggregator
+```
+#### _Step 2d: Create Collaborator1 Workspace Certificate._
+```bash
+cd ${WORKSPACE_PATH_COBR}
+fx collaborator create -n ${COLLAB_NAME} -d ${COLLAB_NUMBER}
+fx collaborator generate-cert-request -n ${COLLAB_NAME}
+```
+#### _Step 2e: Certify collaborator workspace using a Certificate Authority (The Aggregator also serves as the CA here)_
+```bash
+cp ${WORKSPACE_PATH_COBR}/col_${COLLAB_NAME}_to_agg_cert_request.zip ${WORKSPACE_PATH_AGGR}/  # Send collaborator certificate to aggregator
+```
+**_Switch to Aggregator(CA) Terminal and certify the collaborator certificate and send it back to collaborator_.**
+```bash
+export COLLAB_NUMBER=1 #Specify the collaborator number whose certificate you want to certify
+```
+```bash
+export COLLAB_NAME=cob_${COLLAB_NUMBER}
+export COLLAB_PATH=${HOME}/${COLLAB_NAME}
+export WORKSPACE_PATH_COBR=${COLLAB_PATH}/${WORKSPACE_NAME}
+cd ${WORKSPACE_PATH_AGGR}
+fx collaborator certify --request-pkg col_${COLLAB_NAME}_to_agg_cert_request.zip  # Certify the collaborator certificate. Press "y" when asked.
+cp ${WORKSPACE_PATH_AGGR}/agg_to_col_${COLLAB_NAME}_signed_cert.zip ${WORKSPACE_PATH_COBR}/ # Send signed certificate back to collaborator
+```
+**_Return back to Collaborator Terminal and import the signed certificate sent from CA(Aggregator)._**
+```bash
+fx collaborator certify --import agg_to_col_${COLLAB_NAME}_signed_cert.zip #import signed certificate rfom CA.
+```
+### Step 3: Setup Collaborator2 _(in new terminal of same machine)_. _(Tip:Press Ctrl+Alt+T)_
+#### _Step 3a same as Step 2a except for COLLAB_NUMBER below._
+```bash
+export COLLAB_NUMBER=2 # need to define the collab number. (1 now, 2 later, etc)
+```
+#### _Step 3b same as Step 2b_
+#### _Step 3c same as Step 2c_
+#### _Step 3d same as Step 2d_
+#### _Step 3e same as Step 2e except for COLLAB_NUMBER below._
+```bash
+export COLLAB_NUMBER=2 # need to define the collab number. (1 now, 2 later, etc)
+```
 ## Run the federation
-See [Modes and API](#modes-and-associated-api) for supported aggregation algorithms.
-```shell
-<mode>   mode you want to trigger.
-
-sh aggregator_based_mode.sh
-or
-sh Fedai.sh <mode>
+_See [Modes and API](#modes-and-associated-api) for supported aggregation algorithms._
+### Step 4: Start Aggregator (In Aggregator Terminal)
+```bash
+cd ${WORKSPACE_PATH_AGGR}
+fx aggregator start
 ```
-
+### Step 5: Start Collaborators (In Collaborator1 & Collaborator2 Terminals)
+```bash
+cd ${WORKSPACE_PATH_COBR}
+fx collaborator start -n ${COLLAB_NAME}
+```
 ## How it Works
 ### Architecture
 ![Federated Learning](https://raw.githubusercontent.com/intel/openfl/develop/docs/images/diagram_fl_new.png)
