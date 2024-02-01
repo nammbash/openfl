@@ -149,9 +149,7 @@ fx collaborator certify --import agg_to_col_${COLLAB_NAME}_signed_cert.zip #impo
 ```bash
 export COLLAB_NUMBER=2 # need to define the collab number. (1 now, 2 later, etc)
 ```
-#### _Step 3b same as Step 2b_
-#### _Step 3c same as Step 2c_
-#### _Step 3d same as Step 2d_
+#### _Step 3b, 3c, 3d ------same as-----> Step 2b, 2c, 2d_ 
 #### _Step 3e same as Step 2e except for COLLAB_NUMBER below._
 ```bash
 export COLLAB_NUMBER=2 # need to define the collab number. (1 now, 2 later, etc)
