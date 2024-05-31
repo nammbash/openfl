@@ -37,6 +37,7 @@
 
 # In[6]:
 
+
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
@@ -149,23 +150,15 @@ def FedAvg(models, weights=None):
 
 # In[5]:
 
-#import pdb
-#pdb.set_trace()
 
-import servermod as flwrserver
-import clientmod as flwrclient 
+class FederatedFlow(FLSpec):
 
-class FedFlowerFlow(FLSpec):
-
-    def __init__(self, flowerserverapp, flowerclientapp, flowerclient, model=None, optimizer=None, rounds=3, **kwargs):
+    def __init__(self, model=None, optimizer=None, rounds=3, **kwargs):
         super().__init__(**kwargs)
         if model is not None:
             self.model = model
             self.optimizer = optimizer
-            self.flowerserverapp = flowerserverapp
-            self.flowerclientapp = flowerclientapp
-            self.flowerclient = flwrclient.FlowerClient
-        #else:
+        else:
             self.model = Net()
             self.optimizer = optim.SGD(self.model.parameters(), lr=learning_rate,
                                        momentum=momentum)
@@ -182,39 +175,41 @@ class FedFlowerFlow(FLSpec):
     @collaborator
     def aggregated_model_validation(self):
         print(f'Performing aggregated model validation for collaborator {self.input}')
-        parameters = self.flowerclient.get_parameters(flwrserver.evaluate_config) #what config is this?not fit or evaluate
-        loss, testdataloader_len, accuracy_dict =  self.flowerclient.evaluate(parameters, flwrserver.evaluate_config)
-        self.aggregated_model_validation_loss = loss
-        self.aggregated_model_validation_dataset_length = testdataloader_len
-        self.aggregated_model_validation_accuracy = accuracy_dict
+        self.agg_validation_score = inference(self.model, self.test_loader)
+        print(f'{self.input} value of {self.agg_validation_score}')
         self.next(self.train)
-        #self.agg_validation_score = inference(self.model, self.test_loader)
 
     @collaborator
     def train(self):
-        print(f'Performing model training for collaborator {self.input}')
-        parameters = self.flowerclient.get_parameters(flwrserver.fit_config) #what config is this?not fit or evaluate
-        train_parameters, traindataloader_len, =  self.flowerclient.fit(parameters, flwrserver.fit_config)
-        self.local_model_trained_parameters = train_parameters
-        self.local_model_train_dataset_length = traindataloader_len
+        self.model.train()
+        self.optimizer = optim.SGD(self.model.parameters(), lr=learning_rate,
+                                   momentum=momentum)
+        train_losses = []
+        for batch_idx, (data, target) in enumerate(self.train_loader):
+            self.optimizer.zero_grad()
+            output = self.model(data)
+            loss = F.nll_loss(output, target)
+            loss.backward()
+            self.optimizer.step()
+            if batch_idx % log_interval == 0:
+                print('Train Epoch: 1 [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+                    batch_idx * len(data), len(self.train_loader.dataset),
+                    100. * batch_idx / len(self.train_loader), loss.item()))
+                self.loss = loss.item()
+                torch.save(self.model.state_dict(), 'model.pth')
+                torch.save(self.optimizer.state_dict(), 'optimizer.pth')
         self.training_completed = True
         self.next(self.local_model_validation)
 
     @collaborator
     def local_model_validation(self):
-        print(f'Doing local model validation for collaborator {self.input}')
-        parameters = self.flowerclient.set_parameters(self.local_model_trained_parameters)
-        loss, testdataloader_len, accuracy_dict =  self.flowerclient.evaluate(parameters, flwrserver.evaluate_config)
-        self.aggregated_model_validation_loss = loss
-        self.aggregated_model_validation_dataset_length = testdataloader_len
-        self.aggregated_model_validation_accuracy = accuracy_dict
+        self.local_validation_score = inference(self.model, self.test_loader)
+        print(
+            f'Doing local model validation for collaborator {self.input}: {self.local_validation_score}')
         self.next(self.join, exclude=['training_completed'])
 
     @aggregator
     def join(self, inputs):
-        
-        self.weighted_average = flwrserver.
-        
         self.average_loss = sum(input.loss for input in inputs) / len(inputs)
         self.aggregated_model_accuracy = sum(
             input.agg_validation_score for input in inputs) / len(inputs)
@@ -223,7 +218,6 @@ class FedFlowerFlow(FLSpec):
         print(f'Average aggregated model validation values = {self.aggregated_model_accuracy}')
         print(f'Average training loss = {self.average_loss}')
         print(f'Average local model validation values = {self.local_model_accuracy}')
-
         self.model = FedAvg([input.model for input in inputs])
         self.optimizer = [input.optimizer for input in inputs][0]
         self.current_round += 1
@@ -270,11 +264,11 @@ for idx, collaborator_name in enumerate(collaborator_names):
         Collaborator(
             name=collaborator_name,
             private_attributes_callable=callable_to_initialize_collaborator_private_attributes,
-            index=idx, 
+            index=idx,
             n_collaborators=len(collaborator_names),
-            train_dataset=mnist_train, 
-            test_dataset=mnist_test, 
-            batch_size=64
+            train_dataset=mnist_train,
+            test_dataset=mnist_test,
+            batch_size=64,
         )
     )
 
@@ -286,14 +280,11 @@ print(f'Local runtime collaborators = {local_runtime.collaborators}')
 # Now that we have our flow and runtime defined, let's run the experiment! 
 
 # In[7]:
-serverApp = flwrserver.app
-clientApp = flwrclient.app
-flowerclient = flwrclient.FlowerClient
-model = flwrclient.Net
+
+model = None
 best_model = None
-optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
-#pdb.set_trace()
-flflow = FedFlowerFlow(model, optimizer, checkpoint=True)
+optimizer = None #torch.optim.SGD(net.parameters(), lr=0.001, momentum=0.9) #None
+flflow = FederatedFlow(model, optimizer, checkpoint=True)
 flflow.runtime = local_runtime
 flflow.run()
 
@@ -315,7 +306,7 @@ print(f'\nFinal aggregated model accuracy for {flflow.rounds} rounds of training
 # In[ ]:
 
 
-flflow2 = FedFlowerFlow(model=flflow.model, optimizer=flflow.optimizer, checkpoint=True)
+flflow2 = FederatedFlow(model=flflow.model, optimizer=flflow.optimizer, checkpoint=True)
 flflow2.runtime = local_runtime
 flflow2.run()
 
@@ -346,7 +337,7 @@ list(m)
 # In[ ]:
 
 
-f = Flow('FedFlowerFlow').latest_run
+f = Flow('FederatedFlow').latest_run
 
 
 # In[ ]:
@@ -368,7 +359,7 @@ list(f)
 # In[ ]:
 
 
-s = Step(f'FedFlowerFlow/{run_id}/train')
+s = Step(f'FederatedFlow/{run_id}/train')
 
 
 # In[ ]:
@@ -388,7 +379,7 @@ list(s)
 # In[ ]:
 
 
-t = Task(f'FedFlowerFlow/{run_id}/train/9')
+t = Task(f'FederatedFlow/{run_id}/train/9')
 
 
 # In[ ]:
